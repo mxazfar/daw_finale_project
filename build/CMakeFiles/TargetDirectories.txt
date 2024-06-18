@@ -1,0 +1,3 @@
+C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build/CMakeFiles/DAW.dir
+C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build/CMakeFiles/edit_cache.dir
+C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build/CMakeFiles/rebuild_cache.dir
