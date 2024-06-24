@@ -227,6 +227,12 @@ DAW_BINARY_DIR:STATIC=C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/
 //Value Computed by CMake
 DAW_SOURCE_DIR:STATIC=C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project
 
+//Path to a file.
+OPENAL_INCLUDE_DIR:PATH=OPENAL_INCLUDE_DIR-NOTFOUND
+
+//Path to a library.
+OPENAL_LIBRARY:FILEPATH=OPENAL_LIBRARY-NOTFOUND
+
 //Value Computed by CMake
 Project_BINARY_DIR:STATIC=C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build
 
