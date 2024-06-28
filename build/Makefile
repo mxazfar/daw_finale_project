@@ -122,6 +122,33 @@ DAW/fast:
 	$(MAKE) -f CMakeFiles\DAW.dir\build.make CMakeFiles/DAW.dir/build
 .PHONY : DAW/fast
 
+audio_processing.obj: audio_processing.cpp.obj
+
+.PHONY : audio_processing.obj
+
+# target to build an object file
+audio_processing.cpp.obj:
+	$(MAKE) -f CMakeFiles\DAW.dir\build.make CMakeFiles/DAW.dir/audio_processing.cpp.obj
+.PHONY : audio_processing.cpp.obj
+
+audio_processing.i: audio_processing.cpp.i
+
+.PHONY : audio_processing.i
+
+# target to preprocess a source file
+audio_processing.cpp.i:
+	$(MAKE) -f CMakeFiles\DAW.dir\build.make CMakeFiles/DAW.dir/audio_processing.cpp.i
+.PHONY : audio_processing.cpp.i
+
+audio_processing.s: audio_processing.cpp.s
+
+.PHONY : audio_processing.s
+
+# target to generate assembly for a file
+audio_processing.cpp.s:
+	$(MAKE) -f CMakeFiles\DAW.dir\build.make CMakeFiles/DAW.dir/audio_processing.cpp.s
+.PHONY : audio_processing.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -158,6 +185,9 @@ help:
 	@echo ... DAW
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... audio_processing.obj
+	@echo ... audio_processing.i
+	@echo ... audio_processing.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/DAW.dir/main.cpp.obj"
+  "CMakeFiles/DAW.dir/audio_processing.cpp.obj"
   "DAW.pdb"
   "DAW.exe"
   "DAW.exe.manifest"

@@ -3,6 +3,7 @@
 #endif 
 
 #include <iostream>
+#include "audio_processing.hpp"
 #include <Windows.h>
 
 #define WM_LBUTTONDOWN 0x0201
@@ -66,6 +67,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     MSG msg = {};
     while(GetMessage(&msg, NULL, 0 , 0) > 0) {
+        playAudio();
+
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }

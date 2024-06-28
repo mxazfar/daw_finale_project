@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/audio_processing.cpp" "C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build/CMakeFiles/DAW.dir/audio_processing.cpp.obj"
   "C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/main.cpp" "C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/build/CMakeFiles/DAW.dir/main.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
