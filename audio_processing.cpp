@@ -10,10 +10,9 @@
 const int SAMPLE_RATE = 44100;
 const int BITS_PER_SAMPLE = 16;
 const int CHANNELS = 1;
-const double FREQUENCY = 440.0; // A440
 const int DURATION_MS = 1000;   // 1 second
 
-int playAudio() {
+int playAudio(double frequency) {
     // Prepare the WAVEFORMATEX structure
     WAVEFORMATEX wfx = {};
     wfx.wFormatTag = WAVE_FORMAT_PCM;
@@ -36,7 +35,7 @@ int playAudio() {
 
     for (int i = 0; i < bufferSize / sizeof(short); i++) {
         double t = static_cast<double>(i) / SAMPLE_RATE;
-        buffer[i] = static_cast<short>(32767 * sin(2 * 3.141592654 * FREQUENCY * t));
+        buffer[i] = static_cast<short>(32767 * sin(2 * 3.141592654 * frequency * t));
     }
 
     // Prepare the WAVEHDR structure

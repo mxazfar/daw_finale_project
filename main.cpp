@@ -53,6 +53,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         {
             if(LOWORD(wParam) == PLAY_SOUND_BUTTON_ID && HIWORD(wParam) == BN_CLICKED) {
                 printf("BUTTON JUST CLICKED AYOO!!!!!");
+                playAudio(440.0);
                 return 0;
             }
             break;
