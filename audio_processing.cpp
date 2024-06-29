@@ -5,6 +5,8 @@
 
 #include "audio_processing.hpp"
 
+#define RAW_INTENSITY_MAX 32767
+
 #pragma comment(lib, "winmm.lib")
 
 const int SAMPLE_RATE = 44100;
@@ -12,7 +14,11 @@ const int BITS_PER_SAMPLE = 16;
 const int CHANNELS = 1;
 const int DURATION_MS = 1000;   // 1 second
 
-int playAudio(double frequency) {
+double getRawIntensity(double intensity) {
+    return (intensity / 100) * RAW_INTENSITY_MAX;
+}
+
+int playSineWave(double frequency, double intensity) {
     // Prepare the WAVEFORMATEX structure
     WAVEFORMATEX wfx = {};
     wfx.wFormatTag = WAVE_FORMAT_PCM;
@@ -35,7 +41,7 @@ int playAudio(double frequency) {
 
     for (int i = 0; i < bufferSize / sizeof(short); i++) {
         double t = static_cast<double>(i) / SAMPLE_RATE;
-        buffer[i] = static_cast<short>(32767 * sin(2 * 3.141592654 * frequency * t));
+        buffer[i] = static_cast<short>(getRawIntensity(intensity) * sin(2 * 3.141592654 * frequency * t));
     }
 
     // Prepare the WAVEHDR structure

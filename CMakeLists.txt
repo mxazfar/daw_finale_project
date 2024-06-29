@@ -9,4 +9,5 @@ add_executable(DAW
 
 if(WIN32)
     target_link_libraries(DAW winmm)
+    target_link_libraries(DAW comctl32)
 endif()

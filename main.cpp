@@ -2,16 +2,30 @@
 #define UNICODE
 #endif 
 
+#define _WIN32_WINNT 0x0600 
+
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 #include <iostream>
-#include "audio_processing.hpp"
 #include <Windows.h>
 #include <WinUser.h>
+#include <commctrl.h>
+#include <stdlib.h>
+
+#include "audio_processing.hpp"
 
 #define WM_LBUTTONDOWN 0x0201
 
 #define PLAY_SOUND_BUTTON_ID 1
 
 using namespace std;
+
+float clickButtonFrequency = 440;
+double intensityButton = 100;
+double decayFactor = 0.33;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg)
@@ -53,7 +67,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         {
             if(LOWORD(wParam) == PLAY_SOUND_BUTTON_ID && HIWORD(wParam) == BN_CLICKED) {
                 printf("BUTTON JUST CLICKED AYOO!!!!!");
-                playAudio(440.0);
+                playSineWave(clickButtonFrequency, intensityButton);
+                intensityButton *= (1 - decayFactor);
+                clickButtonFrequency *= (1 + decayFactor);
                 return 0;
             }
             break;
@@ -61,6 +77,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+LRESULT CALLBACK ButtonSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+    switch (uMsg)
+    {
+    case WM_LBUTTONDOWN:
+        printf("Button pressed\n");
+        break;
+    case WM_LBUTTONUP:
+        printf("Button released\n");
+        break;
+    }
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
@@ -91,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     HWND hwndButton = CreateWindow(
         L"BUTTON",
         L"Play sound",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_NOTIFY,
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
         10,
         10,
         100,
@@ -101,6 +131,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
         NULL
     );
+
+    SetWindowSubclass(hwndButton, ButtonSubclassProc, 0, 0);
 
     if (hwnd == NULL) {
         return 0;
