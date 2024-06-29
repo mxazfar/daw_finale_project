@@ -5,8 +5,11 @@
 #include <iostream>
 #include "audio_processing.hpp"
 #include <Windows.h>
+#include <WinUser.h>
 
 #define WM_LBUTTONDOWN 0x0201
+
+#define PLAY_SOUND_BUTTON_ID 1
 
 using namespace std;
 
@@ -29,6 +32,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             EndPaint(hwnd, &ps);
         }
         return 0;
+
+    case WM_NOTIFY:
+        {
+            NMHDR* pnmhdr = (NMHDR*)lParam;
+            if(pnmhdr->idFrom == PLAY_SOUND_BUTTON_ID) {
+                switch(pnmhdr->code) {
+                    case BN_PUSHED:
+                        printf("BUTTON BEING PUSHED!!!!");
+                        return 0;
+                    
+                    case BN_UNPUSHED:
+                        printf("BUTTON NOT BEING PUSHED :((");
+                        return 0;
+                }
+            }
+            break;
+        }
+    case WM_COMMAND:
+        {
+            if(LOWORD(wParam) == PLAY_SOUND_BUTTON_ID && HIWORD(wParam) == BN_CLICKED) {
+                printf("BUTTON JUST CLICKED AYOO!!!!!");
+                return 0;
+            }
+            break;
+        }
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -59,6 +87,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         NULL
     );
 
+    HWND hwndButton = CreateWindow(
+        L"BUTTON",
+        L"Play sound",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON | BS_NOTIFY,
+        10,
+        10,
+        100,
+        100,
+        hwnd,
+        (HMENU)PLAY_SOUND_BUTTON_ID,
+        (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE),
+        NULL
+    );
+
     if (hwnd == NULL) {
         return 0;
     }
@@ -67,8 +109,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     MSG msg = {};
     while(GetMessage(&msg, NULL, 0 , 0) > 0) {
-        playAudio();
-
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
