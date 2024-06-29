@@ -23,10 +23,14 @@ C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/audio_processing.hpp
 C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/main.cpp
 iostream
 -
-audio_processing.hpp
-C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/audio_processing.hpp
 Windows.h
 -
 WinUser.h
 -
+commctrl.h
+-
+stdlib.h
+-
+audio_processing.hpp
+C:/Users/moosa/OneDrive/Desktop/Coding/daw_finale_project/audio_processing.hpp
 
