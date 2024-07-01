@@ -23,9 +23,19 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 using namespace std;
 
-float clickButtonFrequency = 440;
-double intensityButton = 100;
-double decayFactor = 0.33;
+bool startThread = false;
+
+AudioThread thread1(startThread);
+AudioThread* thread1Ptr = &thread1;
+
+int waveCmdParams[3] = {440, 50, 500};
+waveCommand_t cmd = {
+    SINE_WAVE_CMD_ID,
+    &waveCmdParams[0]
+};
+waveCommand_t* cmdPtr = &cmd;
+
+void* playbackCommand[2] = {(void*)thread1Ptr, (void*)cmdPtr};
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg)
@@ -46,30 +56,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             EndPaint(hwnd, &ps);
         }
         return 0;
-
-    case WM_NOTIFY:
-        {
-            NMHDR* pnmhdr = (NMHDR*)lParam;
-            if(pnmhdr->idFrom == PLAY_SOUND_BUTTON_ID) {
-                switch(pnmhdr->code) {
-                    case BN_PUSHED:
-                        printf("BUTTON BEING PUSHED!!!!");
-                        return 0;
-                    
-                    case BN_UNPUSHED:
-                        printf("BUTTON NOT BEING PUSHED :((");
-                        return 0;
-                }
-            }
-            break;
-        }
     case WM_COMMAND:
         {
             if(LOWORD(wParam) == PLAY_SOUND_BUTTON_ID && HIWORD(wParam) == BN_CLICKED) {
-                printf("BUTTON JUST CLICKED AYOO!!!!!");
-                playSineWave(clickButtonFrequency, intensityButton);
-                intensityButton *= (1 - decayFactor);
-                clickButtonFrequency *= (1 + decayFactor);
+                printf("BUTTON JUST CLICKED AYOO!!!!!\n");
                 return 0;
             }
             break;
@@ -85,9 +75,12 @@ LRESULT CALLBACK ButtonSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     {
     case WM_LBUTTONDOWN:
         printf("Button pressed\n");
+        thread1.startThread();
+        thread1.startAudioPlayback(&playbackCommand);
         break;
     case WM_LBUTTONUP:
         printf("Button released\n");
+        thread1.stopThread();
         break;
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
