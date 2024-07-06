@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\audio_processing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\error_handling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\audio_processing.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\error_handling.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{239C10E0-D112-3C14-B459-EE0014268548}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{491FEBCF-D504-3657-8903-3FEB50101BAF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\moosa\OneDrive\Desktop\Coding\daw_finale_project\build\CMakeFiles\eae514b123254558be75225784f997b4\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{A670503F-AC8F-348D-9E91-92AC9613A3C8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
