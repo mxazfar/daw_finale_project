@@ -16,18 +16,32 @@ void PrintStackTrace(CONTEXT* context)
 
     SymInitialize(process, NULL, TRUE);
 
-    CONTEXT context_copy = *context; // Make a copy of the context
+    CONTEXT context_copy = *context;
     STACKFRAME64 stack_frame = {};
+
+#ifdef _M_IX86
+    stack_frame.AddrPC.Offset = context_copy.Eip;
+    stack_frame.AddrPC.Mode = AddrModeFlat;
+    stack_frame.AddrFrame.Offset = context_copy.Ebp;
+    stack_frame.AddrFrame.Mode = AddrModeFlat;
+    stack_frame.AddrStack.Offset = context_copy.Esp;
+    stack_frame.AddrStack.Mode = AddrModeFlat;
+    DWORD machine_type = IMAGE_FILE_MACHINE_I386;
+#elif _M_X64
     stack_frame.AddrPC.Offset = context_copy.Rip;
     stack_frame.AddrPC.Mode = AddrModeFlat;
     stack_frame.AddrFrame.Offset = context_copy.Rbp;
     stack_frame.AddrFrame.Mode = AddrModeFlat;
     stack_frame.AddrStack.Offset = context_copy.Rsp;
     stack_frame.AddrStack.Mode = AddrModeFlat;
+    DWORD machine_type = IMAGE_FILE_MACHINE_AMD64;
+#else
+    #error "Unsupported architecture"
+#endif
 
     std::cout << "Stack trace:" << std::endl;
 
-    while (StackWalk64(IMAGE_FILE_MACHINE_AMD64, 
+    while (StackWalk64(machine_type, 
                        process, 
                        thread, 
                        &stack_frame, 
@@ -60,6 +74,7 @@ void PrintStackTrace(CONTEXT* context)
 
     SymCleanup(process);
 }
+
 
 
 std::string GetExceptionString(DWORD exceptionCode) {
