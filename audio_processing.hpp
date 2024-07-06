@@ -33,6 +33,6 @@ private:
     static DWORD WINAPI playAudioThread(LPVOID lpParam);
 };
 
-int playSineWave(double frequency, double intensity, double durationMs);
+int playSineWave(double frequency, double intensity, double durationMs, AudioThread* currentThread);
 
 #endif 

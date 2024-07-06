@@ -13,7 +13,7 @@
 
 const int SAMPLE_RATE = 44100;
 const int BITS_PER_SAMPLE = 16;
-const int CHANNELS = 1;
+const int CHANNELS = 2;
 
 AudioThread::AudioThread(bool startThread) : g_start(false) {
     if(startThread) {
@@ -36,7 +36,7 @@ void AudioThread::startAudioPlayback(void* params)
     if (hThread == NULL)
     {
         std::cerr << "Failed to create thread" << std::endl;
-    }
+    } 
     else
     {
         CloseHandle(hThread); // We're not waiting for the thread, so we can close the handle immediately
@@ -61,8 +61,11 @@ double getRawIntensity(double intensity)
 }
 
 // Expects a pointer to the current audio thread class along with a wavecommand.
-DWORD WINAPI AudioThread::playAudioThread(LPVOID lpParam)
-    {
+DWORD WINAPI AudioThread::playAudioThread(LPVOID lpParam) 
+{
+    printf("Entered playAudioThread\n");
+    
+    try {
         void** typedLpParam = static_cast<void**>(lpParam);
 
         AudioThread *currentThread = (AudioThread*)typedLpParam[THREAD_INDEX];
@@ -70,19 +73,34 @@ DWORD WINAPI AudioThread::playAudioThread(LPVOID lpParam)
 
         int commandID = waveCommand->commandId;
 
-        while(currentThread->isThreadRunning() > 0) {
-            printf("In audio thread");
+        while(currentThread->isThreadRunning()) {
+            printf("In audio thread loop\n");
             if (commandID == SINE_WAVE_CMD_ID)
             {
                 double frequency = waveCommand->params[WAVE_CMD_FREQ_INDEX];
                 double intensity = waveCommand->params[WAVE_CMD_POW_INDEX];
                 double durationMs = waveCommand->params[WAVE_CMD_DURATION_INDEX];
-                playSineWave(frequency, intensity, durationMs);
+                printf("Playing sine wave: freq=%f, intensity=%f, duration=%f\n", frequency, intensity, durationMs);
+                if (playSineWave(frequency, intensity, durationMs, currentThread) != 0) {
+                    printf("Error playing sine wave\n");
+                    break;
+                }
+
+                printf("Leaving play sinewave\n");
             }
         }
     }
+    catch (const std::exception& e) {
+        printf("Caught exception in audio thread: %s\n", e.what());
+    }
+    catch (...) {
+        printf("Caught unknown exception in audio thread\n");
+    }
+    printf("Exiting playAudioThread\n");
+    return 0;
+}
 
-int playSineWave(double frequency, double intensity, double durationMs)
+int playSineWave(double frequency, double intensity, double durationMs, AudioThread* currentThread)
 {
     // Prepare the WAVEFORMATEX structure
     WAVEFORMATEX wfx = {};
@@ -101,8 +119,14 @@ int playSineWave(double frequency, double intensity, double durationMs)
         return 1;
     }
 
-    // Prepare the audio data
-    int bufferSize = SAMPLE_RATE * durationMs / 1000 * wfx.nBlockAlign;
+    int bufferSize;
+
+    if(durationMs == PLAY_CONTINUOUS) {
+        bufferSize = SAMPLE_RATE * 50 / 1000 * wfx.nBlockAlign;
+    } else {
+        bufferSize = SAMPLE_RATE * durationMs / 1000 * wfx.nBlockAlign;
+    }
+
     short *buffer = new short[bufferSize / sizeof(short)];
 
     for (int i = 0; i < bufferSize / sizeof(short); i++)
@@ -146,16 +170,22 @@ int playSineWave(double frequency, double intensity, double durationMs)
     else
     {
         // If we passed continuous sound, we want the sound to keep playing until the thread is closed
-        while (1)
+        while (currentThread->isThreadRunning())
         {
             waveOutWrite(hWaveOut, &header, sizeof(WAVEHDR));
         }
+
+        printf("Leaving sinewave main loop\n");
     }
+
+    printf("Entering sinewave cleanup\n");
 
     // Clean up
     waveOutUnprepareHeader(hWaveOut, &header, sizeof(WAVEHDR));
     waveOutClose(hWaveOut);
     delete[] buffer;
+
+    printf("Leaving sinwave cleanup\n");
 
     return 0;
 }

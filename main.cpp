@@ -16,8 +16,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <stdlib.h>
 
 #include "audio_processing.hpp"
-
-#define WM_LBUTTONDOWN 0x0201
+#include "error_handling.hpp"
 
 #define PLAY_SOUND_BUTTON_ID 1
 
@@ -28,7 +27,7 @@ bool startThread = false;
 AudioThread thread1(startThread);
 AudioThread* thread1Ptr = &thread1;
 
-int waveCmdParams[3] = {440, 50, 500};
+int waveCmdParams[3] = {440, 25, -1};
 waveCommand_t cmd = {
     SINE_WAVE_CMD_ID,
     &waveCmdParams[0]
@@ -41,6 +40,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg)
     {
     case WM_DESTROY:
+        printf("Leaving now!!!");
         PostQuitMessage(0);
         return 0;
 
@@ -64,6 +64,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             }
             break;
         }
+    case WM_CLOSE:
+        printf("WM_CLOSE received\n");
+        DestroyWindow(hwnd);
+        return 0;
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -77,16 +81,29 @@ LRESULT CALLBACK ButtonSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
         printf("Button pressed\n");
         thread1.startThread();
         thread1.startAudioPlayback(&playbackCommand);
-        break;
+        return 0;
     case WM_LBUTTONUP:
         printf("Button released\n");
         thread1.stopThread();
-        break;
+        return 0;
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    SetUnhandledExceptionFilter(UnhandledException);
+
+    if (AllocConsole()) {
+        FILE* fDummy;
+        freopen_s(&fDummy, "CONOUT$", "w", stdout);
+        freopen_s(&fDummy, "CONOUT$", "w", stderr);
+        freopen_s(&fDummy, "CONIN$", "r", stdin);
+        std::cout.clear();
+        std::clog.clear();
+        std::cerr.clear();
+        std::cin.clear();
+    }
+
     const wchar_t CLASS_NAME[] = L"Sample Window Class";
     
     WNDCLASS wc = {};
@@ -134,9 +151,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     ShowWindow(hwnd, nCmdShow);
 
     MSG msg = {};
-    while(GetMessage(&msg, NULL, 0 , 0) > 0) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    try 
+    {
+        while(GetMessage(&msg, NULL, 0 , 0) > 0) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        } 
+    }
+    catch (const std::exception& e) {
+        printf("Caught C++ exception: %s\n", e.what());
+    }
+    catch (unsigned int u) {
+        printf("Caught SE exception: %u\n", u);
+    }
+    catch (...) {
+        printf("Caught unknown exception\n");
+    }
+
+    // Check the thread status before exiting
+    if (thread1.isThreadRunning()) {
+        printf("Audio thread is still running\n");
+        thread1.stopThread();
+    } else {
+        printf("Audio thread is not running\n");
     }
 
     return 0;
