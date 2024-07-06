@@ -85,6 +85,7 @@ LRESULT CALLBACK ButtonSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     case WM_LBUTTONUP:
         printf("Button released\n");
         thread1.stopThread();
+        printf("Audio thread closed\n");
         return 0;
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);

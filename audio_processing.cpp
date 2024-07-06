@@ -48,11 +48,15 @@ void AudioThread::startThread() {
 }
 
 void AudioThread::stopThread() {
+     printf("Entering stopThread()\n");
     g_start.store(false);
+    printf("Thread stop flag set to false\n");
 }
 
 bool AudioThread::isThreadRunning() {
-    return g_start;
+    bool running = g_start.load();
+    printf("Thread running status: %s\n", running ? "true" : "false");
+    return running;
 }
 
 double getRawIntensity(double intensity)
@@ -73,6 +77,7 @@ DWORD WINAPI AudioThread::playAudioThread(LPVOID lpParam)
 
         int commandID = waveCommand->commandId;
 
+        printf("Audio thread starting main loop\n");
         while(currentThread->isThreadRunning()) {
             printf("In audio thread loop\n");
             if (commandID == SINE_WAVE_CMD_ID)
@@ -85,10 +90,10 @@ DWORD WINAPI AudioThread::playAudioThread(LPVOID lpParam)
                     printf("Error playing sine wave\n");
                     break;
                 }
-
-                printf("Leaving play sinewave\n");
+                printf("Finished playing sine wave\n");
             }
         }
+        printf("Exited audio thread main loop\n");
     }
     catch (const std::exception& e) {
         printf("Caught exception in audio thread: %s\n", e.what());
@@ -169,13 +174,18 @@ int playSineWave(double frequency, double intensity, double durationMs, AudioThr
     }
     else
     {
-        // If we passed continuous sound, we want the sound to keep playing until the thread is closed
+        printf("Starting continuous playback\n");
         while (currentThread->isThreadRunning())
         {
-            waveOutWrite(hWaveOut, &header, sizeof(WAVEHDR));
+            MMRESULT result = waveOutWrite(hWaveOut, &header, sizeof(WAVEHDR));
+            if (result != MMSYSERR_NOERROR)
+            {
+                printf("waveOutWrite failed with error code: %d\n", result);
+                break;
+            }
+            Sleep(10);  // Add a small delay to prevent tight looping
         }
-
-        printf("Leaving sinewave main loop\n");
+        printf("Continuous playback loop ended\n");
     }
 
     printf("Entering sinewave cleanup\n");
